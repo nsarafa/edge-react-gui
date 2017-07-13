@@ -1,5 +1,7 @@
+import HockeyApp from 'react-native-hockeyapp'
+
 import React, { Component } from 'react'
-import { View, ActivityIndicator, StatusBar } from 'react-native'
+import { Platform, View, ActivityIndicator, StatusBar } from 'react-native'
 import { connect } from 'react-redux'
 import { Scene, Router } from 'react-native-router-flux'
 import { Container, StyleProvider } from 'native-base'
@@ -41,6 +43,10 @@ import styles from './style.js'
 
 import Config from 'react-native-config'
 const apiKey = Config.AIRBITZ_API_KEY
+const HOCKEY_APP_ID = Platform.select({
+  'ios': Config.HOCKEY_APP_ID_IOS,
+  'android': Config.HOCKEY_APP_ID_ANDROID
+})
 
 const RouterWithRedux = connect()(Router)
 
@@ -57,7 +63,12 @@ class Main extends Component {
     }
   }
 
-  componentDidMount = () => {
+  componentWillMount () {
+    HockeyApp.configure(HOCKEY_APP_ID, true);
+  }
+
+  componentDidMount () {
+    HockeyApp.start()
     makeReactNativeIo()
     .then(io => {
       const context = makeContext({
@@ -74,6 +85,7 @@ class Main extends Component {
     })
     this.props.dispatch(updateExchangeRates()) // this is dummy data and this function will need to be moved
   }
+
   _onLayout = (event) => {
     var {x, y, width, height} = event.nativeEvent.layout
     let xScale = (width / 375).toFixed(2)

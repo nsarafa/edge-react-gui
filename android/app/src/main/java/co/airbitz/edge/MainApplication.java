@@ -3,6 +3,7 @@ package co.airbitz.edge;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.slowpath.hockeyapp.RNHockeyAppPackage;
 import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
 import co.airbitz.fastcrypto.RNFastCryptoPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
@@ -39,6 +40,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNHockeyAppPackage(),
             new ReactNativeConfigPackage(),
             new RNFastCryptoPackage(),
             new VectorIconsPackage(),

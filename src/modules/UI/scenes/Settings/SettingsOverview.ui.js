@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import HockeyApp from 'react-native-hockeyapp'
 import strings from '../../../../locales/default'
 import {sprintf} from 'sprintf-js'
 import PropTypes from 'prop-types'
@@ -80,6 +81,7 @@ class SettingsOverview extends Component {
 
   _onPressDebug = () => {
     console.log('debug button pressed')
+    HockeyApp.generateTestCrash()
   }
 
   render() {
