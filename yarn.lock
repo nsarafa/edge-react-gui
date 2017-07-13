@@ -4744,9 +4744,9 @@ react-native-drawer@^2.3.0:
   dependencies:
     tween-functions "^1.0.1"
 
-"react-native-dropdown@git+https://github.com/g6ling/react-native-dropdown.git":
-  version "0.0.7"
-  resolved "git+https://github.com/g6ling/react-native-dropdown.git#12cd976c8131706134f1a042bb88c4bdb82965ac"
+react-native-dropdown@^0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/react-native-dropdown/-/react-native-dropdown-0.0.6.tgz#f4b899b4082c4823340c7377fbe73bc01399148d"
 
 react-native-easy-grid@0.1.7:
   version "0.1.7"
@@ -4874,6 +4874,10 @@ react-native-side-menu@^0.20.1:
 react-native-simple-gesture@0.0.2:
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/react-native-simple-gesture/-/react-native-simple-gesture-0.0.2.tgz#7ce5ba6eb59132b65effe4f33eb8a28953272d17"
+
+react-native-simple-radio-button@^2.5.0-alpha.1:
+  version "2.5.0-alpha.1"
+  resolved "https://registry.yarnpkg.com/react-native-simple-radio-button/-/react-native-simple-radio-button-2.5.0-alpha.1.tgz#59d1d6a3b2db4eafc36ab675348f4e6bb89303de"
 
 react-native-slider@^0.9.1:
   version "0.9.1"

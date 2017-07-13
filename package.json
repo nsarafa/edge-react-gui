@@ -71,6 +71,7 @@
     "react-native-randombytes": "^2.2.0",
     "react-native-router-flux": "3.38.0",
     "react-native-share": "^1.0.20",
+    "react-native-simple-radio-button": "^2.5.0-alpha.1",
     "react-native-slider": "^0.9.1",
     "react-native-sortable-listview": "^0.2.2",
     "react-native-swipe-flip": "^1.0.2",

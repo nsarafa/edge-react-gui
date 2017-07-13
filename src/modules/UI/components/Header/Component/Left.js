@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import { Text, TouchableOpacity } from 'react-native'
-import { Icon } from 'native-base'
+import { TouchableOpacity } from 'react-native'
+import { Text, Icon } from 'native-base'
 import { Actions } from 'react-native-router-flux'
 
 export default class Left extends Component {
@@ -14,7 +14,7 @@ export default class Left extends Component {
       case 'createWallet':
         return <BackButton />
       default:
-        return null
+        return <BackButton />
     }
   }
 
@@ -25,7 +25,7 @@ class BackButton extends Component {
   render () {
     return (
       <TouchableOpacity onPress={e => Actions.pop()}>
-        <Icon name='arrow-back' />
+        <Text>Back</Text>
       </TouchableOpacity>
     )
   }

@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Text, View, StyleSheet } from 'react-native'
 import { connect } from 'react-redux'
 import Menu, { MenuContext, MenuOptions, MenuOption, MenuTrigger } from 'react-native-menu'
+import { Actions } from 'react-native-router-flux'
 
 import { openHelpModal } from '../../components/HelpModal/actions.js'
 
@@ -9,6 +10,10 @@ class SendConfirmationOptions extends Component {
 
   _handleMenuOptions (key) {
     switch (key) {
+      case 'changeMiningFee':
+        return Actions.changeMiningFee()
+      case 'changeCurrency':
+        return Actions.changeCurrency()
       case 'help':
         return this.props.dispatch(openHelpModal())
     }
@@ -23,10 +28,10 @@ class SendConfirmationOptions extends Component {
             <Text style={styles.trigger}>&#8942;</Text>
           </MenuTrigger>
           <MenuOptions optionsContainerStyle={styles.optionContainer}>
-            <MenuOption value={1} style={styles.optionRow}>
+            <MenuOption value='changeMiningFee' style={styles.optionRow}>
               <Text style={styles.optionText}>Change Mining Fee</Text>
             </MenuOption>
-            <MenuOption value={2} style={styles.optionRow}>
+            <MenuOption value='changeCurrency' style={styles.optionRow}>
               <Text style={styles.optionText}>Change Currency</Text>
             </MenuOption>
             <MenuOption value={3} style={styles.optionRow}>

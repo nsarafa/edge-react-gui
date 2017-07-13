@@ -25,6 +25,8 @@ import Header from './UI/components/Header/Header.ui'
 import TabBar from './UI/components/TabBar/TabBar.ui'
 import HelpModal from './UI/components/HelpModal'
 import TransactionAlert from './UI/components/TransactionAlert'
+import ChangeMiningFee from './UI/components/SendConfirmationOptions/ChangeMiningFee.js'
+import ChangeCurrency from './UI/components/SendConfirmationOptions/ChangeCurrency.js'
 
 import { updateExchangeRates } from './UI/components/ExchangeRate/action'
 import { selectWalletById } from './UI/Wallets/action.js'
@@ -132,11 +134,15 @@ class Main extends Component {
 
                     <Scene key='transactionList' component={TransactionListConnect} title='Transactions' animation={'fade'} duration={300} />
 
-                    <Scene key='transactionDetails' component={TransactionDetails} title='Transaction Details' duration={0} />                    
+                    <Scene key='transactionDetails' component={TransactionDetails} title='Transaction Details' duration={0} />
 
                     <Scene key='request' component={Request} title='Request' animation={'fade'} duration={300} />
 
                     <Scene key='sendConfirmation' component={SendConfirmation} title='Send Confirmation' animation={'fade'} duration={300} />
+
+                    <Scene key='changeMiningFee' component={ChangeMiningFee} title='Change Mining Fee' animation={'fade'} duration={300} />
+
+                    <Scene key='changeCurrency' component={ChangeCurrency} title='Change Currency' animation={'fade'} duration={300} />
 
                     <Scene key='createWallet' component={CreateWallet} title='Create Wallet' animation={'fade'} duration={300} />
 
