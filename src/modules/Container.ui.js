@@ -41,20 +41,15 @@ import { makeContext } from 'airbitz-core-js'
 
 import styles from './style.js'
 
-import Config from 'react-native-config'
-const apiKey = Config.AIRBITZ_API_KEY
-const HOCKEY_APP_ID = Platform.select({
-  'ios': Config.HOCKEY_APP_ID_IOS,
-  'android': Config.HOCKEY_APP_ID_ANDROID
-})
+import ENV from '../../env.json'
+const AIRBITZ_API_KEY = ENV.AIRBITZ_API_KEY
+const HOCKEYAPP_APP_ID = Platform.select(ENV.HOCKEYAPP_APP_ID)
 
 const RouterWithRedux = connect()(Router)
 
 class Main extends Component {
   constructor (props) {
     super(props)
-
-    console.log('main constructor props', props)
 
     this.state = {
       loading: true,
@@ -64,7 +59,7 @@ class Main extends Component {
   }
 
   componentWillMount () {
-    HockeyApp.configure(HOCKEY_APP_ID, true);
+    HockeyApp.configure(HOCKEYAPP_APP_ID, true);
   }
 
   componentDidMount () {
@@ -72,7 +67,7 @@ class Main extends Component {
     makeReactNativeIo()
     .then(io => {
       const context = makeContext({
-        apiKey,
+        apiKey: AIRBITZ_API_KEY,
         io
       })
 
