@@ -36,7 +36,7 @@ import { initializeAccount } from './Login/action.js'
 import { addContext, addUsernamesRequest } from './Core/Context/action.js'
 import { deleteWalletRequest } from './Core/Wallets/action.js'
 
-import { makeReactNativeIo } from 'react-native-airbitz-io'
+import { makeReactNativeIo } from 'airbitz-core-react-native'
 import { makeContext } from 'airbitz-core-js'
 
 import styles from './style.js'
@@ -125,10 +125,10 @@ class Main extends Component {
                 <RouterWithRedux>
 
                   <Scene key='root' hideNavBar>
+                    
+                    <Scene key='scan'  component={Scan} title='Scan' animation={'fade'} duration={300} />
 
-                    <Scene key='scan' component={Scan} title='Scan' animation={'fade'} duration={300} />
-
-                    <Scene key='walletList' component={WalletList} title='Wallets' animation={'fade'} duration={300} initial />
+                    <Scene key='walletList' initial component={WalletList} title='Wallets' animation={'fade'} duration={300} />
 
                     <Scene key='directory' component={Directory} title='Directory' animation={'fade'} duration={300} />
 

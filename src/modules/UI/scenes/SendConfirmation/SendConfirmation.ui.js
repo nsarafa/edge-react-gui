@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import {
   View,
   Share,
@@ -6,7 +7,8 @@ import {
   TouchableHighlight,
   Keyboard,
   Button,
-  Platform
+  Platform,
+  ScrollView
 } from 'react-native'
 import { connect } from 'react-redux'
 import styles from './styles.js'
@@ -23,7 +25,7 @@ import Recipient from '../../components/Recipient/index.js'
 import ABSlider from '../../components/Slider/index.js'
 import Fees from '../../components/Fees/index.js'
 
-import { getCryptoFromFiat, getFiatFromCrypto, sanitizeInput } from '../../../utils.js'
+import { getCryptoFromFiat, getFiatFromCrypto, sanitizeInput, border as b } from '../../../utils.js'
 import LinearGradient from 'react-native-linear-gradient'
 
 import {
@@ -40,6 +42,21 @@ import {
 } from './action.js'
 
 class SendConfirmation extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      keyboardVisible: false
+    }
+  }
+
+  _onFocus = () => {
+    this.setState({keyboardVisible: true})
+  }
+
+  _onBlur = () => {
+    this.setState({keyboardVisible: false})    
+  }
+
   render () {
     const {
       amountSatoshi,
@@ -49,42 +66,43 @@ class SendConfirmation extends Component {
       isSliderLocked,
      } = this.props.sendConfirmation
 
-    const {
-      publicAddress
-    } = this.props
 
     return (
       <LinearGradient
-        style={styles.view}
+        style={[styles.view, b()]}
         start={{x:0,y:0}} end={{x:1, y:0}}
         colors={["#3b7adb","#2b569a"]}
       >
+        <ScrollView style={[styles.mainScrollView]}>
+          <View style={[styles.exchangeRateContainer, b()]} >
+            <ExchangeRate mode={draftStatus} fiatPerCrypto={this.props.fiatPerCrypto} fiatCurrencyCode={this.props.fiatCurrencyCode} cryptoDenom={this.props.inputCurrencyDenom}  />
+          </View>
 
-        <View style={styles.exchangeRateContainer} >
-          <ExchangeRate mode={draftStatus} fiatPerCrypto={this.props.fiatPerCrypto} />
-        </View>
+          <View style={[styles.main, b(), {flex: this.state.keyboardVisible ? 0 : 1}]}>
+            <FlipInput
+              mode={draftStatus}
+              onInputCurrencyToggle={this.onInputCurrencyToggle}
+              onCryptoInputChange={this.onCryptoInputChange}
+              onFiatInputChange={this.onFiatInputChange}
+              amountSatoshi={this.props.amountSatoshi || 0}
+              amountFiat={this.getAmountFiat(this.props.amountSatoshi)}
+              inputCurrencySelected={this.props.inputCurrencySelected}
+              maxAvailableToSpendInCrypto={this.props.getMaxSatoshi}
+              displayFees
+              feeInCrypto={this.props.feeSatoshi}
+              feeInFiat={this.getFeeInFiat(this.props.feeSatoshi)}
+              cryptoDenom={this.props.inputCurrencyDenom}
+              fiatCurrencyCode={this.props.fiatCurrencyCode}   
+              inputOnFocus={this._onFocus}
+              inputOnBlur={this._onBlur}          
+            />
+            {/* <Recipient label={label} address={publicAddress} /> */}
+            <Recipient label={'Ashley Rind'} address={this.props.recipientPublicAddress} />
+            {/* <Password /> */}
+          </View>
 
-        <View style={styles.main}>
-          <FlipInput
-            mode={draftStatus}
-            onInputCurrencyToggle={this.onInputCurrencyToggle}
-            onCryptoInputChange={this.onCryptoInputChange}
-            onFiatInputChange={this.onFiatInputChange}
-            amountSatoshi={this.props.amountSatoshi}
-            amountFiat={this.getAmountFiat(this.props.amountSatoshi)}
-            inputCurrencySelected={this.props.inputCurrencySelected}
-            maxAvailableToSpendInCrypto={this.props.getMaxSatoshi}
-            displayFees
-            feeInCrypto={this.props.feeSatoshi}
-            feeInFiat={this.getFeeInFiat(this.props.feeSatoshi)}
-          />
-          {/* <Recipient label={label} address={publicAddress} /> */}
-          <Recipient label={'Ashley Rind'} address={'1ExAmpLe0FaBiTco1NADr3sSV5tsGaMF6hd'} />
-          <Password />
-        </View>
-
-        <ABSlider onSlidingComplete={this.signBroadcastAndSave} sliderDisabled={!isSliderLocked} />
-
+          <ABSlider style={[b()]} onSlidingComplete={this.signBroadcastAndSave} sliderDisabled={!isSliderLocked} />
+        </ScrollView>
       </LinearGradient>
     )
   }
@@ -129,6 +147,7 @@ class SendConfirmation extends Component {
   }
 
   onInputCurrencyToggle = () => {
+    console.log('SendConfirmation->onInputCurrencyToggle called')
     const { inputCurrencySelected } = this.props
     const nextInputCurrencySelected =
       inputCurrencySelected === 'crypto'
@@ -148,18 +167,25 @@ class SendConfirmation extends Component {
   }
 
   getFeeInFiat = feeSatoshi => {
-    const { fiatPerCrypto = 1077.75 } = this.props
+    const fiatPerCrypto = this.props.fiatPerCrypto
     const feeFiat = getFiatFromCrypto(feeSatoshi, fiatPerCrypto)
 
     return feeFiat
   }
 
   getAmountFiat = amountSatoshi => {
-    const { fiatPerCrypto = 1077.75 } = this.props
+    const fiatPerCrypto = this.props.fiatPerCrypto
     const amountFiat = getFiatFromCrypto(amountSatoshi, fiatPerCrypto)
 
     return amountFiat
   }
+}
+
+SendConfirmation.propTypes = {
+  sendConfirmation: PropTypes.object,
+  fiatPerCrypto: PropTypes.number,
+  inpurCurrencyDenom: PropTypes.string,
+  fiatCurrencyCode: PropTypes.string
 }
 
 const mapStateToProps = state => {
@@ -167,11 +193,13 @@ const mapStateToProps = state => {
     sendConfirmation:      state.ui.scenes.sendConfirmation,
     amountSatoshi:         state.ui.scenes.sendConfirmation.amountSatoshi,
     feeSatoshi:            state.ui.scenes.sendConfirmation.feeSatoshi,
-    fiatPerCrypto:         state.ui.scenes.sendConfirmation.fiatPerCrypto,
+    fiatPerCrypto:         state.ui.scenes.exchangeRate.exchangeRates[state.ui.wallets.byId[state.ui.wallets.selectedWalletId].currencyCode].value,
     inputCurrencySelected: state.ui.scenes.sendConfirmation.inputCurrencySelected,
-    publicAddress:         state.ui.scenes.sendConfirmation.publicAddress,
+    //publicAddress:         state.ui.scenes.sendConfirmation.publicAddress,
     spendInfo:             state.ui.scenes.sendConfirmation.spendInfo,
     transaction:           state.ui.scenes.sendConfirmation.transaction,
+    inputCurrencyDenom: state.ui.wallets.byId[state.ui.wallets.selectedWalletId].denominations[state.ui.settings[state.ui.wallets.byId[state.ui.wallets.selectedWalletId].currencyCode].denomination -1]  ,
+    fiatCurrencyCode: state.core.wallets.byId[state.ui.wallets.selectedWalletId].fiatCurrencyCode    
   }
 }
 
