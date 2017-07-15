@@ -1,5 +1,7 @@
+import HockeyApp from 'react-native-hockeyapp'
+
 import React, { Component } from 'react'
-import { View, ActivityIndicator, StatusBar } from 'react-native'
+import { Platform, View, ActivityIndicator, StatusBar } from 'react-native'
 import { connect } from 'react-redux'
 import { Scene, Router } from 'react-native-router-flux'
 import { Container, StyleProvider } from 'native-base'
@@ -41,13 +43,15 @@ import { makeContext } from 'airbitz-core-js'
 
 import styles from './style.js'
 
+import ENV from '../../env.json'
+const AIRBITZ_API_KEY = ENV.AIRBITZ_API_KEY
+const HOCKEYAPP_APP_ID = Platform.select(ENV.HOCKEYAPP_APP_ID)
+
 const RouterWithRedux = connect()(Router)
 
 class Main extends Component {
   constructor (props) {
     super(props)
-
-    console.log('main constructor props', props)
 
     this.state = {
       loading: true,
@@ -56,11 +60,16 @@ class Main extends Component {
     }
   }
 
-  componentDidMount = () => {
+  componentWillMount () {
+    HockeyApp.configure(HOCKEYAPP_APP_ID, true);
+  }
+
+  componentDidMount () {
+    HockeyApp.start()
     makeReactNativeIo()
     .then(io => {
       const context = makeContext({
-        apiKey: '0b5776a91bf409ac10a3fe5f3944bf50417209a0',
+        apiKey: AIRBITZ_API_KEY,
         io
       })
 
@@ -73,6 +82,7 @@ class Main extends Component {
     })
     this.props.dispatch(updateExchangeRates()) // this is dummy data and this function will need to be moved
   }
+
   _onLayout = (event) => {
     var {x, y, width, height} = event.nativeEvent.layout
     let xScale = (width / 375).toFixed(2)
@@ -125,7 +135,7 @@ class Main extends Component {
                 <RouterWithRedux>
 
                   <Scene key='root' hideNavBar>
-                    
+
                     <Scene key='scan'  component={Scan} title='Scan' animation={'fade'} duration={300} />
 
                     <Scene key='walletList' initial component={WalletList} title='Wallets' animation={'fade'} duration={300} />
