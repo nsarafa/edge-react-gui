@@ -112,6 +112,7 @@ export const deleteWallet = walletId => (dispatch, getState) => {
 export const updateActiveWalletsOrder = activeWalletIds => (dispatch, getState) => {
   const state = getState()
   const {account} = state.core
+  console.log('in WalletList->action->updateActiveWalletsOrder, activeWalletIds is: ', activeWalletIds)
   dispatch(updateActiveWalletsOrderStart(activeWalletIds))
   ACCOUNT_API.updateActiveWalletsOrderRequest(account, activeWalletIds)
     .then(response => {

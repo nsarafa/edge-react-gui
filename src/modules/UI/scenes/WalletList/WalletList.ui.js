@@ -308,22 +308,13 @@ class WalletList extends Component {
 
   sortActiveWallets = (wallets) => {
     let activeOrdered = Object.keys(wallets).filter(key => !wallets[key].archived) // filter out archived wallets
-    .sort((a, b) => {
-      if (wallets[a].sortIndex === wallets[b].sortIndex) {
-        return -1
-      } else {
-        return wallets[a].sortIndex - wallets[b].sortIndex
-      }
-    }) // sort them according to their (previous) sortIndices
     return activeOrdered
   }
 
   onActiveRowMoved = action => {
     const wallets = this.props.wallets
     const activeOrderedWallets = Object.keys(wallets).filter(key => !wallets[key].archived) // filter out archived wallets
-    .sort((a, b) => wallets[a].sortIndex - wallets[b].sortIndex) // sort them according to their (previous) sortIndices
-    const order = activeOrderedWallets
-    const newOrder = this.getNewOrder(order, action) // pass the old order to getNewOrder with the action ( from, to, and  )
+    const newOrder = this.getNewOrder(activeOrderedWallets, action) // pass the old order to getNewOrder with the action ( from, to, and  )
 
     this.props.dispatch(updateActiveWalletsOrder(newOrder))
     this.forceUpdate()
