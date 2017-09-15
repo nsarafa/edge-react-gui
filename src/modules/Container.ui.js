@@ -98,7 +98,7 @@ class Main extends Component {
     .then(context => {
       // Put the context into Redux:
       this.props.addContext(context)
-
+      console.log('in Container, and context is: ', context)
       CONTEXT_API.listUsernames(context)
       .then(usernames => {
         this.props.addUsernames(usernames)

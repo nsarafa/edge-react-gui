@@ -21,7 +21,11 @@ import * as CORE_SELECTORS from '../../../Core/selectors.js'
 import * as UI_SELECTORS from '../../selectors.js'
 import * as SETTINGS_SELECTORS from '../../Settings/selectors.js'
 
-import {saveReceiveAddress, saveToLog} from './action.js'
+import {saveReceiveAddress} from './action.js'
+
+import RNFS from 'react-native-fs'
+
+const path = RNFS.DocumentDirectoryPath + '/test.txt'
 
 class Request extends Component {
   constructor (props) {
@@ -31,22 +35,31 @@ class Request extends Component {
       secondaryNativeAmount: '',
       encodedURI: ''
     }
+    // this.props.dispatch(saveToLog('inside of constructor'))
   }
 
   componentWillReceiveProps (nextProps) {
+
     if (nextProps.coreWallet.id !== this.props.coreWallet.id) {
       const {coreWallet, currencyCode} = nextProps
       console.log('inside of Request.ui.js->componentWillReceiveProps, nextProps is: ', nextProps)
+      // this.props.dispatch(saveToLog('inside of componentWillReceive props, about to executed WalletAPI.getReceiveAddress'))
       WALLET_API.getReceiveAddress(coreWallet, currencyCode)
       .then(receiveAddress => {
         const {publicAddress} = receiveAddress
-        console.log('in request->ComponentWillReceiveProps, receiveAddress is: ', receiveAddress, ' , coreWallet is: ', coreWallet, ' , and currencyCode is: ', currencyCode)
-        this.props.dispatch(saveToLog('testing'))
-        const encodedURI = this.props.coreWallet.encodeUri(receiveAddress)
+        console.log('in request->ComponentWillReceiveProps, receiveAddress.publicAddress is: ', receiveAddress.publicAddress, ' , coreWallet is: ', coreWallet, ' , and currencyCode is: ', currencyCode)
+        // this.props.dispatch(saveToLog('previous address was: ' + this.state.publicAddress + ' , and now the new address is: ' + receiveAddress.publicAddress))
+//const encodedURI = this.props.coreWallet.encodeUri(receiveAddress)
+        RNFS.writeFile(RNFS.DocumentDirectoryPath + '/then.txt', 'publicAddress is: ' + publicAddress, 'utf8')
         this.setState({
-          encodedURI,
+          //encodedURI,
           publicAddress
         })
+      })
+      .catch(e => {
+        RNFS.writeFile(path, 'error getting receive address: ' + e.message + ' , coreWallet is: ' + coreWallet + ' , and currencyCode is: ' + currencyCode, 'utf8')
+        // this.props.dispatch(saveToLog('error getting receive address: ' + e.type + ' - ' + e.message))
+        console.log('error: ', e)
       })
     }
   }
@@ -61,6 +74,9 @@ class Request extends Component {
         encodedURI,
         publicAddress
       })
+    })
+    .catch(e => {
+      console.log('error: ', e)
     })
   }
 
@@ -92,6 +108,7 @@ class Request extends Component {
       secondaryInfo
     } = this.props
     const nativeAmount = this.state.primaryNativeAmount
+    console.log('rendering Request.ui.js, this.state.publicAddress is: ', this.state.publicAddress)
     return (
       <LinearGradient style={styles.view} start={{x: 0, y: 0}} end={{x: 1, y: 0}}
         colors={['#3b7adb', '#2b569a']}>

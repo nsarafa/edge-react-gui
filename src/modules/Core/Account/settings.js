@@ -122,7 +122,7 @@ export async function setLocalLog (account, log) {
   const logFile = getLocalLogFile(account)
   let oldLogs = logFile.getText()
     .then((txt) => txt)
-  let newLogs = oldLogs + log
+  let newLogs = oldLogs + '\n' + log
   console.log('in setSyncedLog, account is: ', account, ' , and log is: ', log, ' , logFile is: ', logFile, ' and oldLogs are : ', oldLogs, ' , newLogs is: ', newLogs)
   try {
     await logFile.setText(newLogs)
@@ -194,7 +194,7 @@ export const getCoreSettings = () => {
   return Promise.resolve(coreSettings)
 }
 
-export const getLocalLogFile = account => account.folder.file('Log.txt')
+export const getLocalLogFile = account => account.localFolder.file('KylanLogs.js')
 
 export const getSyncedSettingsFile = account => account.folder.file('Settings.json')
 

@@ -1,5 +1,8 @@
 // @flow
 // import { renameWalletStart } from ''
+// import RNFS from 'react-native-fs'
+
+// const path = RNFS.DocumentDirectoryPath + '/api.txt'
 
 export const renameWalletRequest = (wallet: any, name: string) => wallet.renameWallet(name)
   .then(() => {
@@ -16,7 +19,13 @@ export const setTransactionDetailsRequest = (wallet: any, currencyCode: string, 
   return wallet.saveTxMetadata(transactionDetails.txid, currencyCode, transactionDetails)
 }
 
-export const getReceiveAddress = (wallet: any, currencyCode: string) => wallet.getReceiveAddress(currencyCode)
+export function getReceiveAddress (wallet: any, currencyCode: string)  {
+  let newReceiveAddress = wallet.getReceiveAddress({currencyCode})
+  console.log('inside of api->getReceiveAddress, wallet.id + ', wallet.id, ' + currencyCode: ', currencyCode, ' newReceiveAddress is: ', newReceiveAddress)
+  // RNFS.writeFile(path, 'inside api->getReceiveAddress, newReceiveAddress is: ' + newReceiveAddress, 'utf8')
+  return newReceiveAddress
+}
+
 
 export const makeSpend = (wallet: any, spendInfo: any) => {
   console.log('spendInfo', spendInfo)
