@@ -5,7 +5,6 @@ import {bns} from 'biggystring'
 import {
   View,
   TouchableHighlight,
-  Animated,
   Image,
   ActivityIndicator
 } from 'react-native'
@@ -39,11 +38,9 @@ class SortableWalletListRow extends Component {
     let name = walletData.name || sprintf(strings.enUS['string_no_name'])
     let symbol = findDenominationSymbol(walletData.denominations, walletData.currencyCode)
     return (
-      <Animated.View style={[{width: this.props.dimensions.deviceDimensions.width}, b()]}>
-        <TouchableHighlight
+      <View style={[{width: this.props.dimensions.deviceDimensions.width}, b()]}>
+        <View
           style={[styles.rowContainer]}
-          underlayColor={'#eee'}
-          {...this.props.sortHandlers}
           >
           <View style={[styles.rowContent]}>
             <View style={[styles.rowNameTextWrap]}>
@@ -61,8 +58,8 @@ class SortableWalletListRow extends Component {
               />
             </View>
           </View>
-        </TouchableHighlight>
-      </Animated.View>
+        </View>
+      </View>
     )
   }
 }
@@ -76,6 +73,47 @@ export const SortableWalletListRowConnect =  connect((state, ownProps) => {
     exchangeDenomination
   }
 })(SortableWalletListRow)
+
+class SortableListRowEmptyData extends Component {
+  render () {
+    console.log('RENDERING SORTABLE LIST EMPTY ROW')
+    return (
+      <TouchableHighlight
+        style={[styles.rowContainer], {height: 50, backgroundColor: 'white', padding: 16, paddingLeft: 20, paddingRight: 20, justifyContent: 'space-between', borderBottomWidth: 1, borderColor: '#EEE'}}
+        underlayColor={'#eee'}
+        {...this.props.sortHandlers}
+      >
+        <View style={[styles.rowContent]}>
+          <View style={[styles.rowNameTextWrap]}>
+            <ActivityIndicator style={{height: 18, width: 18}}/>
+          </View>
+        </View>
+      </TouchableHighlight>
+    )
+  }
+}
+
+class SortableWalletRow extends Component {
+  render () {
+    console.log('rendering SortableWalletRow, this is: ', this)
+    return (
+      <View>
+        {this.props.data.currencyCode ? (
+          <SortableWalletListRowConnect
+            data={this.props.data}
+            dimensions={this.props.dimensions}
+            displayDenomination={this.props.displayDenomination}
+            exchangeDenomination={this.props.exchangeDenomination}
+          />
+        ) : (
+          <SortableListRowEmptyData />
+        )}
+      </View>
+    )
+  }
+}
+
+export const SortableWalletRowConnect = SortableWalletRow
 
 class FullWalletListRow extends Component {
 
@@ -95,7 +133,7 @@ class FullWalletListRow extends Component {
     let name = walletData.name || sprintf(strings.enUS['string_no_name'])
     let symbol = denomination.symbol
     return (
-      <Animated.View style={[{width: this.props.dimensions.deviceDimensions.width}, b()]}>
+      <View style={[{width: this.props.dimensions.deviceDimensions.width}, b()]}>
           <View>
             <TouchableHighlight
               style={[styles.rowContainer]}
@@ -118,7 +156,7 @@ class FullWalletListRow extends Component {
             </TouchableHighlight>
             {this.renderTokenRow(id, walletData.nativeBalances, this.props.active)}
           </View>
-      </Animated.View>
+      </View>
     )
   }
 
@@ -146,7 +184,7 @@ export const FullWalletListRowConnect =  connect((state, ownProps) => {
   }
 })(FullWalletListRow)
 
-class WalletRow extends Component {
+class FullWalletRow extends Component {
   render () {
     console.log('rendering WalletRow, this is: ', this)
     return (
@@ -154,16 +192,16 @@ class WalletRow extends Component {
         {this.props.data.item.id ? (
           <FullWalletListRowConnect data={this.props.data} />
         ) : (
-          <RowEmptyData />
+          <FullListRowEmptyData />
         )}
       </View>
     )
   }
 }
 
-export const WalletRowConnect = WalletRow
+export const FullWalletRowConnect = FullWalletRow
 
-class RowEmptyData extends Component {
+class FullListRowEmptyData extends Component {
   render () {
     console.log('RENDERING EMPTY ROW')
     return (
