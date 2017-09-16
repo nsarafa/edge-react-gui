@@ -33,6 +33,7 @@ export const findDenominationSymbol = (denoms, value) => {
 class SortableWalletListRow extends Component {
 
   render () {
+    //console.log('about to render SortableWalletListRow, this is: ' , this)
     const {data} = this.props
     let walletData = data
     let multiplier = this.props.displayDenomination.multiplier
@@ -85,7 +86,7 @@ class FullWalletListRow extends Component {
   }
 
   render () {
-    console.log('in FullWalletListRow, this is: ', this)
+    //console.log('in FullWalletListRow, this is: ', this)
     const {data} = this.props
     let walletData = data.item
     let currencyCode = walletData.currencyCode
@@ -148,7 +149,7 @@ export const FullWalletListRowConnect =  connect((state, ownProps) => {
 
 class WalletRow extends Component {
   render () {
-    console.log('rendering WalletRow, this is: ', this)
+    //console.log('rendering WalletRow, this is: ', this)
     return (
       <View>
         {this.props.data.item.id ? (
@@ -165,7 +166,7 @@ export const WalletRowConnect = WalletRow
 
 class RowEmptyData extends Component {
   render () {
-    console.log('RENDERING EMPTY ROW')
+    //console.log('RENDERING EMPTY ROW')
     return (
       <TouchableHighlight
         style={[styles.rowContainer], {height: 50, backgroundColor: 'white', padding: 16, paddingLeft: 20, paddingRight: 20, justifyContent: 'space-between', borderBottomWidth: 1, borderColor: '#EEE'}}

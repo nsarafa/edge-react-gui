@@ -140,7 +140,13 @@ class WalletList extends Component {
       return wallets[x] || tempWalletObj
     })
 
-    console.log('beginning of walletList render, activeWalletsArray is: ' , activeWalletsArray)
+    let activeWalletsObject = {}
+    this.props.activeWalletIds.forEach(function (x) {
+      let tempWalletObj = wallets[x] ? wallets[x] : {}
+      activeWalletsObject[x] = tempWalletObj
+    })
+
+    //console.log('beginning of walletList render, activeWalletsArray is: ' , activeWalletsArray, ' , and activeWalletsObject is: ' , activeWalletsObject)
     return (
       <View style={styles.container}>
         {this.renderDeleteWalletModal()}
@@ -188,7 +194,7 @@ class WalletList extends Component {
 
           {
             Object.keys(wallets).length > 0 ? (
-            this.renderActiveSortableList(activeWalletsArray, /*activeSortedWallets*/))
+            this.renderActiveSortableList(activeWalletsArray, activeWalletsObject))
             : <ActivityIndicator style={{flex: 1, alignSelf: 'center'}} size={'large'} />
           }
 
@@ -197,12 +203,23 @@ class WalletList extends Component {
     )
   }
 
-  renderActiveSortableList = (activeWalletsArray, /*activeSortedWallets*/) => {
+  renderActiveSortableList = (activeWalletsArray, activeWalletsObject) => {
     const {width} = Dimensions.get('window')
-    console.log('rendering ActiveSortableList, activeWalletsArray is: ', activeWalletsArray)
+    //console.log('rendering ActiveSortableList, activeWalletsArray is: ', activeWalletsArray)
     return (
       <View style={[styles.listsContainer, UTILS.border()]}>
-
+        <Animated.View testID={'sortableList'} style={[{flex: 1, opacity: this.state.sortableListOpacity, zIndex: this.state.sortableListZIndex}, styles.sortableList, UTILS.border()]}>
+          <SortableListView
+            style={{flex: 1, width}}
+            data={activeWalletsObject}
+            order={this.props.activeWalletIds}
+            onRowMoved={this.onActiveRowMoved}
+            render={sprintf(strings.enUS['fragmet_wallets_list_archive_title_capitalized'])}
+            renderRow={this.renderActiveRow /*, this.onActiveRowMoved*/}
+            sortableMode={this.state.sortableMode}
+            executeWalletRowOption={this.executeWalletRowOption}
+            activeOpacity={0.6} />
+        </Animated.View>
         <Animated.View testID={'fullList'} style={[{flex: 1, opacity: this.state.fullListOpacity, zIndex: this.state.fullListZIndex}, styles.fullList]}>
           <FlatList
             style={{flex: 1, width}}
@@ -220,7 +237,7 @@ class WalletList extends Component {
 
   enableSorting = () => {
     // start animation, use callback to setState, then setState's callback to execute 2nd animation
-    console.log('enabling sorting, this is: ', this)
+    //console.log('enabling sorting, this is: ', this)
     let sortableToOpacity = 1
     let sortableListToZIndex = 100
     let fullListToOpacity = 0
@@ -319,7 +336,7 @@ class WalletList extends Component {
 
   onActiveRowMoved = action => {
     const newOrder = this.getNewOrder(this.props.activeWalletIds, action) // pass the old order to getNewOrder with the action ( from, to, and  )
-    console.log('onActiveRowMoved, action is: ' , action, ' , and newOrder is: ' , newOrder, ' , this.props.activeWalletIds is: ', this.props.activeWalletIds)
+    //console.log('onActiveRowMoved, action is: ' , action, ' , and newOrder is: ' , newOrder, ' , this.props.activeWalletIds is: ', this.props.activeWalletIds)
 
     this.props.dispatch(updateActiveWalletsOrder(newOrder))
     this.forceUpdate()
