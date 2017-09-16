@@ -34,8 +34,6 @@ class SortableWalletListRow extends Component {
   render () {
     const {data} = this.props
     let walletData = data
-    let currencyCode = walletData.currencyCode
-    console.log('still in walletListRow, currencyCode is : ', currencyCode, ' , walletData is : ', walletData, ' , this.props.index is: ', this.props.index)
     let multiplier = this.props.displayDenomination.multiplier
     let name = walletData.name || sprintf(strings.enUS['string_no_name'])
     let symbol = findDenominationSymbol(walletData.denominations, walletData.currencyCode)

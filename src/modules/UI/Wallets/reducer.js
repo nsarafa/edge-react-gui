@@ -4,7 +4,8 @@ import {combineReducers} from 'redux'
 import {GUIWallet} from '../../../types.js'
 import type {AbcDenomination, AbcMetaToken} from 'airbitz-core-types'
 import * as ACTION from './action'
-import {UPDATE_WALLETS} from '../../Core/Wallets/action.js'
+import {UPDATE_WALLETS, UPDATE_ACTIVE_WALLETS_ORDER} from '../../Core/Wallets/action.js'
+
 
 export const byId = (state: any = {}, action: any) => {
   const {type, data = {} } = action
@@ -30,11 +31,15 @@ export const byId = (state: any = {}, action: any) => {
 }
 
 export const activeWalletIds = (state: any = [], action: any) => {
-  if (action.type === UPDATE_WALLETS) {
+  switch (action.type) {
+  case UPDATE_WALLETS:
     return action.data.activeWalletIds
-  }
+  case UPDATE_ACTIVE_WALLETS_ORDER:
+    return action.data.activeWalletIds
+  default:
+    return state
 
-  return state
+  }
 }
 
 export const archivedWalletIds = (state: any = [], action: any) => {

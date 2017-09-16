@@ -29,6 +29,7 @@ export const ADD_TOKEN = 'ADD_TOKEN'
 
 import * as ACCOUNT_API from '../../../Core/Account/api.js'
 import * as WALLET_API from '../../../Core/Wallets/api.js'
+import * as WALLET_ACTIONS from '../../../Core/Wallets/action.js'
 import * as UI_ACTIONS from '../../Wallets/action.js'
 
 import * as CORE_SELECTORS from '../../../Core/selectors.js'
@@ -112,24 +113,13 @@ export const deleteWallet = walletId => (dispatch, getState) => {
 export const updateActiveWalletsOrder = activeWalletIds => (dispatch, getState) => {
   const state = getState()
   const {account} = state.core
-  console.log('in WalletList->action->updateActiveWalletsOrder, activeWalletIds is: ', activeWalletIds)
+  console.log('about to dispatch to updateActiveWalletsOrderStart, activeWalletIds is: ', activeWalletIds)
   dispatch(updateActiveWalletsOrderStart(activeWalletIds))
   ACCOUNT_API.updateActiveWalletsOrderRequest(account, activeWalletIds)
-    .then(response => {
-      console.log('response', response)
-      dispatch(updateActiveWalletsOrderSuccess(activeWalletIds))
-      for (let k in activeWalletIds) {
-        dispatch(updateIndividualWalletSortIndex(activeWalletIds[k], k))
-      }
+    .then(() => {
+      dispatch(WALLET_ACTIONS.updateActiveWalletsOrder(activeWalletIds))
     })
     .catch(e => console.log(e))
-}
-
-export const updateIndividualWalletSortIndex = (walletId, sortIndex) => (dispatch, getState) => {
-  const state = getState()
-  const wallet = CORE_SELECTORS.getWallet(state, walletId)
-  wallet.sortIndex = sortIndex
-  return dispatch(UI_ACTIONS.upsertWallet(wallet))
 }
 
 export const updateArchivedWalletsOrder = archivedWalletIds => (dispatch, getState) => {
@@ -147,11 +137,6 @@ export const updateArchivedWalletsOrder = archivedWalletIds => (dispatch, getSta
 
 const updateActiveWalletsOrderStart = activeWalletIds => ({
   type: UPDATE_ACTIVE_WALLETS_ORDER_START,
-  data: {activeWalletIds}
-})
-
-const updateActiveWalletsOrderSuccess = activeWalletIds => ({
-  type: UPDATE_ACTIVE_WALLETS_ORDER_SUCCESS,
   data: {activeWalletIds}
 })
 

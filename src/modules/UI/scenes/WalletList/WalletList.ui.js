@@ -116,15 +116,26 @@ class WalletList extends Component {
   }
 
   render () {
-    console.log('beginning of walletList render, this is: ', this.state)
     const {wallets} = this.props
     let walletsArray = []
+    let activeWallets = {}
     for (let wallet in wallets) {
       let theWallet = wallets[wallet]
       theWallet.key = wallet
       theWallet.executeWalletRowOption = this.executeWalletRowOption
       walletsArray.push(theWallet)
+      if (this.props.activeWalletIds.includes(wallet)) activeWallets[wallet] = wallets[wallet]
     }
+    /*let walletsSortedArray = walletsArray.sort((a, b) => {
+      console.log('a.id is: ', a.id, ', and its index is: ' , this.props.activeWalletIds.indexOf([a.id], 0), 'b.id is: ', b.id, ' and its index is: ' , this.props.activeWalletIds.indexOf([b.id], 0))
+      return this.props.activeWalletIds.indexOf([b.id], 0) - this.props.activeWalletIds.indexOf([a.id], 0)
+    })*/
+    let walletsSortedArray = []
+    let activeSortedWallets = {}
+    this.props.activeWalletIds.filter((id)  => this.props.wallets[id]).map((id) => walletsSortedArray.push(this.props.wallets[id]))
+    this.props.activeWalletIds.filter((id)  => this.props.wallets[id]).map((id) => activeSortedWallets[id] = this.props.wallets[id])
+
+    console.log('beginning of walletList render, this is: ', this.state, ' and activeWallets is: ', activeWallets, ' activeSortedWallets is: ', activeSortedWallets, ' , and walletsSortedArray is:  ', walletsSortedArray, ' walletsArray is: ', walletsArray)
     return (
       <View style={styles.container}>
         {this.renderDeleteWalletModal()}
@@ -172,7 +183,7 @@ class WalletList extends Component {
 
           {
             Object.keys(wallets).length > 0
-              ? this.renderActiveSortableList(walletsArray)
+              ? this.renderActiveSortableList(walletsSortedArray, activeSortedWallets)
               : <ActivityIndicator style={{flex: 1, alignSelf: 'center'}} size={'large'} />
           }
 
@@ -181,15 +192,15 @@ class WalletList extends Component {
     )
   }
 
-  renderActiveSortableList = (walletsArray) => {
+  renderActiveSortableList = (walletsSortedArray, activeSortedWallets) => {
     const {width} = Dimensions.get('window')
     return (
       <View style={[styles.listsContainer, UTILS.border()]}>
         <Animated.View testID={'sortableList'} style={[{flex: 1, opacity: this.state.sortableListOpacity, zIndex: this.state.sortableListZIndex}, styles.sortableList, UTILS.border()]}>
           <SortableListView
             style={{flex: 1, width}}
-            data={this.props.wallets}
-            order={this.sortActiveWallets(this.props.wallets)}
+            data={activeSortedWallets}
+            // order={this.props.activeWalletIds}
             onRowMoved={this.onActiveRowMoved}
             render={sprintf(strings.enUS['fragmet_wallets_list_archive_title_capitalized'])}
             renderRow={this.renderActiveRow /*, this.onActiveRowMoved*/}
@@ -200,7 +211,7 @@ class WalletList extends Component {
         <Animated.View testID={'fullList'} style={[{flex: 1, opacity: this.state.fullListOpacity, zIndex: this.state.fullListZIndex}, styles.fullList]}>
           <FlatList
             style={{flex: 1, width}}
-            data={walletsArray}
+            data={walletsSortedArray}
             extraData={this.props.wallets}
             renderItem={(item) => <FullWalletListRow data={item} />}
             sortableMode={this.state.sortableMode}
@@ -312,9 +323,8 @@ class WalletList extends Component {
   }
 
   onActiveRowMoved = action => {
-    const wallets = this.props.wallets
-    const activeOrderedWallets = Object.keys(wallets).filter(key => !wallets[key].archived) // filter out archived wallets
-    const newOrder = this.getNewOrder(activeOrderedWallets, action) // pass the old order to getNewOrder with the action ( from, to, and  )
+    const newOrder = this.getNewOrder(this.props.activeWalletIds, action) // pass the old order to getNewOrder with the action ( from, to, and  )
+    console.log('onActiveRowMoved, action is: ' , action, ' , and newOrder is: ' , newOrder, ' , this.props.activeWalletIds is: ', this.props.activeWalletIds)
 
     this.props.dispatch(updateActiveWalletsOrder(newOrder))
     this.forceUpdate()
@@ -332,9 +342,10 @@ class WalletList extends Component {
   }
 
   getNewOrder = (order, action) => {
+    console.log('in getNewOrder, order is: ' , order, ' , and action is: ', action)
     const {to, from} = action
     const newOrder = [].concat(order)
-    newOrder.splice(to, 0, newOrder.splice(from, 1)[0])
+    newOrder.splice(to , 0, newOrder.splice(from , 1)[0])
 
     return newOrder
   }

@@ -8,13 +8,9 @@ export const renameWalletRequest = (wallet: any, name: string) => wallet.renameW
 
 export const getTransactions = (wallet: any, currencyCode: string) => wallet.getTransactions({currencyCode})
 
-export const setTransactionDetailsRequest = (wallet: any, currencyCode: string, transactionDetails: any) => {
-  console.log('wallet is: ', wallet)
-  console.log('currencyCode is: ', currencyCode)
-  console.log('transactionDetails: ', transactionDetails)
+export const setTransactionDetailsRequest = (wallet: any, currencyCode: string, transactionDetails: any) =>
   //  parameters should be txid, currencyCode, and then metaData
-  return wallet.saveTxMetadata(transactionDetails.txid, currencyCode, transactionDetails)
-}
+   wallet.saveTxMetadata(transactionDetails.txid, currencyCode, transactionDetails)
 
 export const getReceiveAddress = (wallet: any, currencyCode: string) => wallet.getReceiveAddress(currencyCode)
 
