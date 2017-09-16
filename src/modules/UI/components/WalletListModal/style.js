@@ -22,7 +22,11 @@ export default StyleSheet.create({
     padding: 16,
     paddingLeft: 20,
     paddingRight: 20,
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    height: 50
+  },
+  rowNameTextWrap: {
+    height: 18
   },
   rowNameText: {
     fontSize: 18

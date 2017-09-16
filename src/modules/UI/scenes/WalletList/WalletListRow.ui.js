@@ -6,7 +6,8 @@ import {
   View,
   TouchableHighlight,
   Animated,
-  Image
+  Image,
+  ActivityIndicator
 } from 'react-native'
 import {connect} from 'react-redux'
 import {Actions} from 'react-native-router-flux'
@@ -84,6 +85,7 @@ class FullWalletListRow extends Component {
   }
 
   render () {
+    console.log('in FullWalletListRow, this is: ', this)
     const {data} = this.props
     let walletData = data.item
     let currencyCode = walletData.currencyCode
@@ -94,26 +96,28 @@ class FullWalletListRow extends Component {
     let symbol = denomination.symbol
     return (
       <Animated.View style={[{width: this.props.dimensions.deviceDimensions.width}, b()]}>
-        <TouchableHighlight
-          style={[styles.rowContainer]}
-          underlayColor={'#eee'}
-          {...this.props.sortHandlers}
-          onPress={() => this._onPressSelectWallet(id, currencyCode)}
-        >
-          <View style={[styles.rowContent]}>
-            <View style={[styles.rowNameTextWrap]}>
-              <T style={[styles.rowNameText]} numberOfLines={1}>{cutOffText(name, 34)}</T>
-            </View>
-            <View style={[styles.rowBalanceTextWrap]}>
-              <T style={[styles.rowBalanceAmountText]}>
-                {truncateDecimals(bns.divf(walletData.primaryNativeBalance, multiplier).toString(), 6)}
-              </T>
-              <T style={[styles.rowBalanceDenominationText]}>{walletData.currencyCode} ({symbol || ''})</T>
-            </View>
-            <RowOptions sortableMode={this.props.sortableMode} executeWalletRowOption={walletData.executeWalletRowOption} walletKey={id} archived={walletData.archived} />
+          <View>
+            <TouchableHighlight
+              style={[styles.rowContainer]}
+              underlayColor={'#eee'}
+              {...this.props.sortHandlers}
+              onPress={() => this._onPressSelectWallet(id, currencyCode)}
+            >
+              <View style={[styles.rowContent]}>
+                <View style={[styles.rowNameTextWrap]}>
+                  <T style={[styles.rowNameText]} numberOfLines={1}>{cutOffText(name, 34)}</T>
+                </View>
+                <View style={[styles.rowBalanceTextWrap]}>
+                  <T style={[styles.rowBalanceAmountText]}>
+                    {truncateDecimals(bns.divf(walletData.primaryNativeBalance, multiplier).toString(), 6)}
+                  </T>
+                  <T style={[styles.rowBalanceDenominationText]}>{walletData.currencyCode} ({symbol || ''})</T>
+                </View>
+                <RowOptions sortableMode={this.props.sortableMode} executeWalletRowOption={walletData.executeWalletRowOption} walletKey={id} archived={walletData.archived} />
+              </View>
+            </TouchableHighlight>
+            {this.renderTokenRow(id, walletData.nativeBalances, this.props.active)}
           </View>
-        </TouchableHighlight>
-        {this.renderTokenRow(id, walletData.nativeBalances, this.props.active)}
       </Animated.View>
     )
   }
@@ -141,6 +145,42 @@ export const FullWalletListRowConnect =  connect((state, ownProps) => {
     exchangeDenomination
   }
 })(FullWalletListRow)
+
+class WalletRow extends Component {
+  render () {
+    console.log('rendering WalletRow, this is: ', this)
+    return (
+      <View>
+        {this.props.data.item.id ? (
+          <FullWalletListRowConnect data={this.props.data} />
+        ) : (
+          <RowEmptyData />
+        )}
+      </View>
+    )
+  }
+}
+
+export const WalletRowConnect = WalletRow
+
+class RowEmptyData extends Component {
+  render () {
+    console.log('RENDERING EMPTY ROW')
+    return (
+      <TouchableHighlight
+        style={[styles.rowContainer], {height: 50, backgroundColor: 'white', padding: 16, paddingLeft: 20, paddingRight: 20, justifyContent: 'space-between', borderBottomWidth: 1, borderColor: '#EEE'}}
+        underlayColor={'#eee'}
+        {...this.props.sortHandlers}
+      >
+        <View style={[styles.rowContent]}>
+          <View style={[styles.rowNameTextWrap]}>
+            <ActivityIndicator style={{height: 18, width: 18}}/>
+          </View>
+        </View>
+      </TouchableHighlight>
+    )
+  }
+}
 
 export const WalletListTokenRowConnect = connect((state, ownProps) => {
   const walletId = ownProps.parentId

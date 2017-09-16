@@ -26,8 +26,8 @@ import {Actions} from 'react-native-router-flux'
 import styles from './style'
 import SortableListView from 'react-native-sortable-listview'
 import {
-  FullWalletListRowConnect as FullWalletListRow,
-  SortableWalletListRowConnect as SortableWalletListRow
+  SortableWalletListRowConnect as SortableWalletListRow,
+  WalletRowConnect as WalletRow
 } from './WalletListRow.ui'
 import {options} from './WalletListRowOptions.ui.js'
 import strings from '../../../../locales/default'
@@ -130,12 +130,17 @@ class WalletList extends Component {
       console.log('a.id is: ', a.id, ', and its index is: ' , this.props.activeWalletIds.indexOf([a.id], 0), 'b.id is: ', b.id, ' and its index is: ' , this.props.activeWalletIds.indexOf([b.id], 0))
       return this.props.activeWalletIds.indexOf([b.id], 0) - this.props.activeWalletIds.indexOf([a.id], 0)
     })*/
-    let walletsSortedArray = []
+    /*let walletsSortedArray = []
     let activeSortedWallets = {}
     this.props.activeWalletIds.filter((id)  => this.props.wallets[id]).map((id) => walletsSortedArray.push(this.props.wallets[id]))
     this.props.activeWalletIds.filter((id)  => this.props.wallets[id]).map((id) => activeSortedWallets[id] = this.props.wallets[id])
+    */
+    let activeWalletsArray = this.props.activeWalletIds.map(function (x) {
+      let tempWalletObj = {key: x}
+      return wallets[x] || tempWalletObj
+    })
 
-    console.log('beginning of walletList render, this is: ', this.state, ' and activeWallets is: ', activeWallets, ' activeSortedWallets is: ', activeSortedWallets, ' , and walletsSortedArray is:  ', walletsSortedArray, ' walletsArray is: ', walletsArray)
+    console.log('beginning of walletList render, activeWalletsArray is: ' , activeWalletsArray)
     return (
       <View style={styles.container}>
         {this.renderDeleteWalletModal()}
@@ -182,9 +187,9 @@ class WalletList extends Component {
           </LinearGradient>
 
           {
-            Object.keys(wallets).length > 0
-              ? this.renderActiveSortableList(walletsSortedArray, activeSortedWallets)
-              : <ActivityIndicator style={{flex: 1, alignSelf: 'center'}} size={'large'} />
+            Object.keys(wallets).length > 0 ? (
+            this.renderActiveSortableList(activeWalletsArray, /*activeSortedWallets*/))
+            : <ActivityIndicator style={{flex: 1, alignSelf: 'center'}} size={'large'} />
           }
 
         </View>
@@ -192,28 +197,18 @@ class WalletList extends Component {
     )
   }
 
-  renderActiveSortableList = (walletsSortedArray, activeSortedWallets) => {
+  renderActiveSortableList = (activeWalletsArray, /*activeSortedWallets*/) => {
     const {width} = Dimensions.get('window')
+    console.log('rendering ActiveSortableList, activeWalletsArray is: ', activeWalletsArray)
     return (
       <View style={[styles.listsContainer, UTILS.border()]}>
-        <Animated.View testID={'sortableList'} style={[{flex: 1, opacity: this.state.sortableListOpacity, zIndex: this.state.sortableListZIndex}, styles.sortableList, UTILS.border()]}>
-          <SortableListView
-            style={{flex: 1, width}}
-            data={activeSortedWallets}
-            // order={this.props.activeWalletIds}
-            onRowMoved={this.onActiveRowMoved}
-            render={sprintf(strings.enUS['fragmet_wallets_list_archive_title_capitalized'])}
-            renderRow={this.renderActiveRow /*, this.onActiveRowMoved*/}
-            sortableMode={this.state.sortableMode}
-            executeWalletRowOption={this.executeWalletRowOption}
-            activeOpacity={0.6} />
-        </Animated.View>
+
         <Animated.View testID={'fullList'} style={[{flex: 1, opacity: this.state.fullListOpacity, zIndex: this.state.fullListZIndex}, styles.fullList]}>
           <FlatList
             style={{flex: 1, width}}
-            data={walletsSortedArray}
+            data={activeWalletsArray}
             extraData={this.props.wallets}
-            renderItem={(item) => <FullWalletListRow data={item} />}
+            renderItem={(item) => <WalletRow data={item} />}
             sortableMode={this.state.sortableMode}
             executeWalletRowOption={this.executeWalletRowOption} />
         </Animated.View>
