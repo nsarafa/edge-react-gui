@@ -37,6 +37,14 @@ export const getDisplayDenominationKey = (state: any, currencyCode: string) => {
   return selectedDenominationKey
 }
 
+export const getDisplayDenominationFromSettings = (settings: any, currencyCode: string) => {
+  const currencySettings = settings[currencyCode] || isoFiatDenominations[currencyCode]
+  const selectedDenominationKey = currencySettings.denomination
+  const denominations = currencySettings.denominations
+  const selectedDenomination = denominations.find(denomination => denomination.multiplier === selectedDenominationKey)
+  return selectedDenomination
+}
+
 export const getDisplayDenomination = (state: any, currencyCode: string) => {
   const selectedDenominationKey = getDisplayDenominationKey(state, currencyCode)
   const denominations = getDenominations(state, currencyCode)

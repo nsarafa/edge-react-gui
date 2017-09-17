@@ -34,43 +34,55 @@ class SortableWalletListRow extends Component {
   render () {
     const {data} = this.props
     let walletData = data
-    let multiplier = this.props.displayDenomination.multiplier
-    let name = walletData.name || sprintf(strings.enUS['string_no_name'])
-    let symbol = findDenominationSymbol(walletData.denominations, walletData.currencyCode)
+    let multiplier, name, symbol
+    // const exchangeDenomination = SETTINGS_SELECTORS.getExchangeDenomination(state, data.currencyCode)
+    if (walletData.currencyCode) {
+      let displayDenomination = SETTINGS_SELECTORS.getDisplayDenominationFromSettings(this.props.settings, data.currencyCode)
+      multiplier = displayDenomination.multiplier
+      name = walletData.name || sprintf(strings.enUS['string_no_name'])
+      symbol = findDenominationSymbol(walletData.denominations, walletData.currencyCode)
+    }
+    console.log('rendering SortableWalletListRow, walletData is: ', walletData, ' this is: ', this)
     return (
-      <View style={[{width: this.props.dimensions.deviceDimensions.width}, b()]}>
-        <View
-          style={[styles.rowContainer]}
-          >
-          <View style={[styles.rowContent]}>
-            <View style={[styles.rowNameTextWrap]}>
-              <T style={[styles.rowNameText]} numberOfLines={1}>{cutOffText(name, 34)}</T>
+      <TouchableHighlight
+        style={[b('green'), styles.rowContainer, {width: this.props.dimensions.deviceDimensions.width, height: 50, backgroundColor: 'white', padding: 16, paddingLeft: 20, paddingRight: 20, justifyContent: 'space-between', borderBottomWidth: 1, borderColor: '#EEE'}]}
+        underlayColor={'#eee'}
+        {...this.props.sortHandlers}
+      >
+          {walletData.currencyCode? (
+            <View style={[styles.rowContent]}>
+              <View style={[styles.rowNameTextWrap]}>
+                <T style={[styles.rowNameText]} numberOfLines={1}>{cutOffText(name, 34)}</T>
+              </View>
+              <View style={[styles.rowBalanceTextWrap]}>
+                <T style={[styles.rowBalanceAmountText]}>{truncateDecimals(bns.divf(walletData.primaryNativeBalance, multiplier).toString(), 6)}</T>
+                <T style={[styles.rowBalanceDenominationText]}>{walletData.currencyCode}
+                  ({symbol || ''})</T>
+              </View>
+              <View style={[styles.rowDragArea, b()]}>
+                <Image
+                  source={sort}
+                  style={{height: 15, width: 15}}
+                />
+              </View>
             </View>
-            <View style={[styles.rowBalanceTextWrap]}>
-              <T style={[styles.rowBalanceAmountText]}>{truncateDecimals(bns.divf(walletData.primaryNativeBalance, multiplier).toString(), 6)}</T>
-              <T style={[styles.rowBalanceDenominationText]}>{walletData.currencyCode}
-                ({symbol || ''})</T>
-            </View>
-            <View style={[styles.rowDragArea, b()]}>
-              <Image
-                source={sort}
-                style={{height: 15, width: 15}}
-              />
-            </View>
-          </View>
-        </View>
-      </View>
+            ) : (
+              <View style={[styles.rowContent]}>
+                <View style={[styles.rowNameTextWrap]}>
+                  <ActivityIndicator style={{height: 18, width: 18}}/>
+                </View>
+              </View>
+          )}
+        </TouchableHighlight>
     )
   }
 }
 
-export const SortableWalletListRowConnect =  connect((state, ownProps) => {
-  const displayDenomination = SETTINGS_SELECTORS.getDisplayDenomination(state, ownProps.data.currencyCode)
-  const exchangeDenomination = SETTINGS_SELECTORS.getExchangeDenomination(state, ownProps.data.currencyCode)
+export const SortableWalletListRowConnect =  connect((state) => {
+  const settings = state.ui.settings
+
   return {
-    dimensions: state.ui.scenes.dimensions,
-    displayDenomination,
-    exchangeDenomination
+    settings
   }
 })(SortableWalletListRow)
 
@@ -82,13 +94,7 @@ class SortableListRowEmptyData extends Component {
         style={[styles.rowContainer], {height: 50, backgroundColor: 'white', padding: 16, paddingLeft: 20, paddingRight: 20, justifyContent: 'space-between', borderBottomWidth: 1, borderColor: '#EEE'}}
         underlayColor={'#eee'}
         {...this.props.sortHandlers}
-      >
-        <View style={[styles.rowContent]}>
-          <View style={[styles.rowNameTextWrap]}>
-            <ActivityIndicator style={{height: 18, width: 18}}/>
-          </View>
-        </View>
-      </TouchableHighlight>
+       />
     )
   }
 }

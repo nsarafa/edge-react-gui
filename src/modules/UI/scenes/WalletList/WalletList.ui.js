@@ -26,7 +26,7 @@ import {Actions} from 'react-native-router-flux'
 import styles from './style'
 import SortableListView from 'react-native-sortable-listview'
 import {
-  SortableWalletRowConnect,
+  SortableWalletListRowConnect,
   FullWalletRowConnect as WalletRow
 } from './WalletListRow.ui'
 import {options} from './WalletListRowOptions.ui.js'
@@ -205,20 +205,20 @@ class WalletList extends Component {
 
   renderActiveSortableList = (activeWalletsArray, activeWalletsObject) => {
     const {width} = Dimensions.get('window')
-    console.log('rendering ActiveSortableList, activeWalletsArray is: ', activeWalletsArray, ' , and activeWalletsObject is: ', activeWalletsObject)
     return (
       <View style={[styles.listsContainer, UTILS.border()]}>
-        <Animated.View testID={'sortableList'} style={[{flex: 1, opacity: this.state.sortableListOpacity, zIndex: this.state.sortableListZIndex}, styles.sortableList, UTILS.border()]}>
+        <Animated.View testID={'sortableList'} style={[UTILS.border(), {flex: 1, opacity: this.state.sortableListOpacity, zIndex: this.state.sortableListZIndex}, styles.sortableList, UTILS.border()]}>
           <SortableListView
             style={{flex: 1, width}}
             data={activeWalletsObject}
             order={this.props.activeWalletIds}
             onRowMoved={this.onActiveRowMoved}
             render={sprintf(strings.enUS['fragmet_wallets_list_archive_title_capitalized'])}
-            renderRow={this.renderActiveRow /*, this.onActiveRowMoved*/}
-            sortableMode={this.state.sortableMode}
+            renderRow={(row) => <SortableWalletListRowConnect data={row} dimensions={this.props.dimensions} />}
             executeWalletRowOption={this.executeWalletRowOption}
-            activeOpacity={0.6} />
+            activeOpacity={0.6}
+            dimensions={this.props.dimensions}
+          />
         </Animated.View>
         <Animated.View testID={'fullList'} style={[{flex: 1, opacity: this.state.fullListOpacity, zIndex: this.state.fullListZIndex}, styles.fullList]}>
           <FlatList
@@ -230,13 +230,6 @@ class WalletList extends Component {
             executeWalletRowOption={this.executeWalletRowOption} />
         </Animated.View>
       </View>
-    )
-  }
-
-  renderActiveRow (row) {
-    console.log('inside of renderActiveRow, row is: ', row)
-    return (
-      <SortableWalletRowConnect data={row} />
     )
   }
 
@@ -430,7 +423,8 @@ const mapStateToProps = (state) => {
     walletName: state.ui.scenes.walletList.walletName,
     walletId: state.ui.scenes.walletList.walletId,
     walletOrder: state.ui.wallets.walletListOrder,
-    currencyConverter
+    currencyConverter,
+    dimensions: state.ui.scenes.dimensions
   }
 }
 
