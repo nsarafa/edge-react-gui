@@ -42,7 +42,7 @@ class SortableWalletListRow extends Component {
       name = walletData.name || sprintf(strings.enUS['string_no_name'])
       symbol = findDenominationSymbol(walletData.denominations, walletData.currencyCode)
     }
-    console.log('rendering SortableWalletListRow, walletData is: ', walletData, ' this is: ', this)
+    //console.log('rendering SortableWalletListRow, walletData is: ', walletData, ' this is: ', this)
     return (
       <TouchableHighlight
         style={[b('green'), styles.rowContainer, {width: this.props.dimensions.deviceDimensions.width, height: 50, backgroundColor: 'white', padding: 16, paddingLeft: 20, paddingRight: 20, justifyContent: 'space-between', borderBottomWidth: 1, borderColor: '#EEE'}]}
@@ -88,7 +88,7 @@ export const SortableWalletListRowConnect =  connect((state) => {
 
 class SortableListRowEmptyData extends Component {
   render () {
-    console.log('RENDERING SORTABLE LIST EMPTY ROW')
+    //console.log('RENDERING SORTABLE LIST EMPTY ROW')
     return (
       <TouchableHighlight
         style={[styles.rowContainer], {height: 50, backgroundColor: 'white', padding: 16, paddingLeft: 20, paddingRight: 20, justifyContent: 'space-between', borderBottomWidth: 1, borderColor: '#EEE'}}
@@ -101,7 +101,7 @@ class SortableListRowEmptyData extends Component {
 
 class SortableWalletRow extends Component {
   render () {
-    console.log('rendering SortableWalletRow, this is: ', this)
+    //console.log('rendering SortableWalletRow, this is: ', this)
     return (
       <View>
         {this.props.data.currencyCode ? (
@@ -129,7 +129,7 @@ class FullWalletListRow extends Component {
   }
 
   render () {
-    console.log('in FullWalletListRow, this is: ', this)
+    //console.log('in FullWalletListRow, this is: ', this)
     const {data} = this.props
     let walletData = data.item
     let currencyCode = walletData.currencyCode
@@ -192,7 +192,7 @@ export const FullWalletListRowConnect =  connect((state, ownProps) => {
 
 class FullWalletRow extends Component {
   render () {
-    console.log('rendering WalletRow, this is: ', this)
+    //console.log('rendering WalletRow, this is: ', this)
     return (
       <View>
         {this.props.data.item.id ? (
@@ -209,7 +209,7 @@ export const FullWalletRowConnect = FullWalletRow
 
 class FullListRowEmptyData extends Component {
   render () {
-    console.log('RENDERING EMPTY ROW')
+    //console.log('RENDERING EMPTY ROW')
     return (
       <TouchableHighlight
         style={[styles.rowContainer], {height: 50, backgroundColor: 'white', padding: 16, paddingLeft: 20, paddingRight: 20, justifyContent: 'space-between', borderBottomWidth: 1, borderColor: '#EEE'}}

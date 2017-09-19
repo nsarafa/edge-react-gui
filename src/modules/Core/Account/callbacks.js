@@ -17,7 +17,7 @@ export const makeAccountCallbacks = dispatch => {
     },
 
     onKeyListChanged: () => {
-      console.log('onKeyListChanged')
+      console.log('kylan: onKeyListChanged')
       dispatch(updateWalletsRequest())
     },
 

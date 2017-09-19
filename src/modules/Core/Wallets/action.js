@@ -14,7 +14,6 @@ export const updateWallets = (activeWalletIds, archivedWalletIds, currencyWallet
   }
 })
 
-UPDATE_ACTIVE_WALLETS_ORDER
 export const updateActiveWalletsOrder = (activeWalletIds) => ({
   type: UPDATE_ACTIVE_WALLETS_ORDER,
   data: {
@@ -33,6 +32,7 @@ export const updateWalletsRequest = () => (dispatch, getState) => {
 
   const account = CORE_SELECTORS.getAccount(state)
   const {activeWalletIds, archivedWalletIds, currencyWallets} = account
+  console.log('inside Core/Wallets->action.updateWalletsRequest, account is: ', account)
 
   return dispatch(updateWallets(activeWalletIds, archivedWalletIds, currencyWallets))
 }
