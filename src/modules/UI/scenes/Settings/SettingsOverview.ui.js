@@ -41,7 +41,11 @@ export default class SettingsOverview extends Component {
       }, {
         key: Constants.RECOVER_PASSWORD,
         text: sprintf(strings.enUS['settings_button_change_pass_recovery']),
-        routeFunction: this._onPressRecoverPasswordRouting
+        routeFunction: this._onPressDummyRouting
+      }, {
+        key: 'defaultFiatSetting',
+        text: sprintf(strings.enUS['settings_select_currency']),
+        routeFunction: Actions.defaultFiatSetting
       }
     ]
     this.securityRoute = [

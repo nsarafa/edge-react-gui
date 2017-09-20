@@ -211,6 +211,11 @@ export const isCompleteExchangeData = (exchangeData: ExchangeData) =>
     && !!exchangeData.fiatExchangeAmount
     && !!exchangeData.fiatCurrencyCode
 
-export const getSupportedFiats = (): Array<> => {
-  const supportedFiatDenominations = getAllDenomsOfIsoCurrencies()
+export const getSupportedFiats = (): Array<{}> => {
+  const currencySymbolsFromCurrencyCode = currencySymbolMap
+  const entries = Object.entries(currencySymbolsFromCurrencyCode)
+  const supportedFiats = entries.map((entry) => ({
+    label: entry[1], value: entry[0]
+  }))
+  return supportedFiats
 }
