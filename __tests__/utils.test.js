@@ -477,3 +477,21 @@ describe('isCompleteExchangeData', function () {
     expect(actual).toBe(expected)
   })
 })
+
+describe('getSupportedFiats', function () {
+  test('resolves to array of object {value, label}', function () {
+    const supportedFiats = UTILS.getSupportedFiats()
+    supportedFiats.forEach((fiat) => {
+      expect(fiat).toEqual(expect.objectContaining(
+        {label: expect.any(String), value: expect.any(String)}
+      ))
+    })
+  })
+
+  test('each value has iso: prefix', function () {
+    const supportedFiats = UTILS.getSupportedFiats()
+    supportedFiats.forEach((fiat) => {
+      expect(fiat.value.slice(0, 4)).toBe('iso:')
+    })
+  })
+})
