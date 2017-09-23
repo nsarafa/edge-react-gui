@@ -34,11 +34,13 @@ export default class SettingsOverview extends Component {
         key: Constants.CHANGE_PASSWORD,
         text: sprintf(strings.enUS['settings_button_change_password']),
         routeFunction: this._onPressChangePasswordRouting
-      }, {
+      },
+      {
         key: Constants.CHANGE_PIN,
         text: sprintf(strings.enUS['settings_button_pin']),
         routeFunction: this._onPressChangePinRouting
-      }, {
+      },
+      {
         key: Constants.RECOVER_PASSWORD,
         text: sprintf(strings.enUS['settings_button_change_pass_recovery']),
         routeFunction: this._onPressRecoverPasswordRouting
@@ -55,11 +57,13 @@ export default class SettingsOverview extends Component {
     this.options = {
       pinRelogin: {
         text: sprintf(strings.enUS['settings_title_pin_login']),
-        key: 'pinRelogin'
+        key: 'pinRelogin',
+        routeFunction: this._onToggleOption
       },
       useTouchID: {
         text: sprintf(strings.enUS['settings_button_use_touchID']),
-        key: 'useTouchID'
+        key: 'useTouchID',
+        routeFunction: this._onToggleTouchIdOption
       }
     }
 
@@ -90,7 +94,7 @@ export default class SettingsOverview extends Component {
   }
 
   _onPressDummyRouting = () => {
-    console.log('dummy routing')
+    console.log('Allen: dummy routing')
   }
 
   _onPressChangePasswordRouting = () => {
@@ -99,7 +103,6 @@ export default class SettingsOverview extends Component {
 
   _onPressChangePinRouting = () => {
     Actions[Constants.CHANGE_PIN]()
-
   }
   _onPressRecoverPasswordRouting = () => {
     Actions[Constants.CHANGE_PASSWORD]()
@@ -117,8 +120,12 @@ export default class SettingsOverview extends Component {
     // console.log('open change categories thingy')
   }
 
-  _onToggleOption = () => {
-    // console.log('toggling option: ', property)
+  _onToggleOption = (property) => {
+    console.log('Allen toggling option: ', property)
+  }
+
+  _onToggleTouchIdOption = (bool) => {
+    console.log('Allen toggling _onToggleTouchIdOption: ', bool)
   }
 
   _onPressDebug = () => {
@@ -145,9 +152,16 @@ export default class SettingsOverview extends Component {
         <Gradient style={[s.unlockRow]}>
           <View style={[s.accountBoxHeaderTextWrap, b('yellow')]}>
             <View style={s.leftArea}>
-              <FAIcon style={[s.userIcon, b('green')]} name='user-o' color='white' />
+              <FAIcon
+                style={[s.userIcon, b('green')]}
+                name='user-o'
+                color='white'
+              />
               <T style={s.accountBoxHeaderText}>
-                {sprintf(strings.enUS['settings_account_title_cap'])}: {this.props.username}
+                {sprintf(strings.enUS['settings_account_title_cap'])}
+                :
+                {' '}
+                {this.props.username}
               </T>
             </View>
           </View>
@@ -160,7 +174,11 @@ export default class SettingsOverview extends Component {
         <Gradient style={[s.unlockRow]}>
           <View style={[s.accountBoxHeaderTextWrap, b('yellow')]}>
             <View style={s.leftArea}>
-              <IonIcon name='ios-options' style={[s.userIcon, b('green')]} color='white' />
+              <IonIcon
+                name='ios-options'
+                style={[s.userIcon, b('green')]}
+                color='white'
+              />
               <T style={s.accountBoxHeaderText}>
                 {sprintf(strings.enUS['settings_options_title_cap'])}
               </T>
@@ -169,31 +187,54 @@ export default class SettingsOverview extends Component {
         </Gradient>
 
         <View>
-          <RowModal onPress={this.showAutoLogoutModal}
+          <RowModal
+            onPress={this.showAutoLogoutModal}
             leftText={sprintf(strings.enUS['settings_title_auto_logoff'])}
-            rightText={this.props.autoLogoutTimeInMinutes || disabled} />
+            rightText={this.props.autoLogoutTimeInMinutes || disabled}
+          />
 
           {this.securityRoute.map(this.renderRowRoute)}
           {Object.keys(this.options).map(this.renderRowSwitch)}
           {this.currencies.map(this.renderRowRoute)}
           <View style={[s.debugArea, b('green')]}>
-            <PrimaryButton text={sprintf(strings.enUS['settings_button_debug'])} onPressFunction={this._onPressDebug} />
+            <PrimaryButton
+              text={sprintf(strings.enUS['settings_button_debug'])}
+              onPressFunction={this._onPressDebug}
+            />
           </View>
           <View style={s.emptyBottom} />
         </View>
 
-        <AutoLogoutModal showModal={this.state.showAutoLogoutModal}
+        <AutoLogoutModal
+          showModal={this.state.showAutoLogoutModal}
           onDone={this.onDoneAutoLogoutModal}
-          onCancel={this.onCancelAutoLogoutModal} />
+          onCancel={this.onCancelAutoLogoutModal}
+        />
       </ScrollView>
     )
   }
 
   showAutoLogoutModal = () => this.setState({showAutoLogoutModal: true})
 
-  renderRowRoute = (x, i) => <RowRoute leftText={x.text} key={i} scene={x.key} routeFunction={x.routeFunction} />
+  renderRowRoute = (x, i) => (
+    <RowRoute
+      leftText={x.text}
+      key={i}
+      scene={x.key}
+      routeFunction={x.routeFunction}
+    />
+  )
 
-  renderRowSwitch = (x) => <RowSwitch leftText={this.options[x].text} key={this.options[x].key} property={this.options[x].key} />
+  renderRowSwitch = (x) => (
+    <RowSwitch
+      leftText={this.options[x].text}
+      key={this.options[x].key}
+      property={this.options[x].key}
+      onToggle={this.options[x].routeFunction}
+    />
+  )
 
-  renderRowModal = (x) => <RowModal leftText={x.text} key={x.key} modal={(x.key).toString()} />
+  renderRowModal = (x) => (
+    <RowModal leftText={x.text} key={x.key} modal={x.key.toString()} />
+  )
 }
