@@ -33,17 +33,17 @@ export default class SettingsOverview extends Component {
     this.settings = [
       {
         key: Constants.CHANGE_PASSWORD,
-        text: sprintf(strings.enUS['settings_button_change_password']),
+        text: strings.enUS['settings_button_change_password'],
         routeFunction: this._onPressChangePasswordRouting
       },
       {
         key: Constants.CHANGE_PIN,
-        text: sprintf(strings.enUS['settings_button_pin']),
+        text: strings.enUS['settings_button_pin'],
         routeFunction: this._onPressChangePinRouting
       },
       {
         key: Constants.RECOVER_PASSWORD,
-        text: sprintf(strings.enUS['settings_button_change_pass_recovery']),
+        text: strings.enUS['settings_button_change_pass_recovery'],
         routeFunction: this._onPressRecoverPasswordRouting
       }
     ]
@@ -58,7 +58,7 @@ export default class SettingsOverview extends Component {
     this.options = {
       pinRelogin: {
         text: strings.enUS['settings_title_pin_login'],
-        key: 'pinRelogin'
+        key: 'pinRelogin',
         routeFunction: this._onToggleOption
       },
       useTouchID: {
@@ -253,7 +253,6 @@ export default class SettingsOverview extends Component {
     />
   )
 
-  renderRowModal = (x) => (
- 	 <RowModal leftText={x.text} key={x.key} modal={x.key.toString()} />
+  renderRowModal = (x) => (<RowModal leftText={x.text} key={x.key} modal={x.key.toString()} />
   )
 }
