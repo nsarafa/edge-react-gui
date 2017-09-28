@@ -59,12 +59,16 @@ export default class SettingsOverview extends Component {
       pinRelogin: {
         text: strings.enUS['settings_title_pin_login'],
         key: 'pinRelogin',
-        routeFunction: this._onToggleOption
-      },
-      useTouchID: {
+        routeFunction: this._onToggleOption,
+        value: false
+      }
+    }
+    if (this.props.supportsTouchId) {
+      this.options.useTouchID =  {
         text: strings.enUS['settings_button_use_touchID'],
         key: 'useTouchID',
-        routeFunction: this._onToggleTouchIdOption
+        routeFunction: this._onToggleTouchIdOption,
+        value: this.props.touchIdEnabled
       }
     }
 
@@ -126,6 +130,7 @@ export default class SettingsOverview extends Component {
   }
 
   _onToggleTouchIdOption = (bool) => {
+    this.props.enableTouchId(bool)
     console.log('Allen toggling _onToggleTouchIdOption: ', bool)
   }
 
@@ -250,6 +255,7 @@ export default class SettingsOverview extends Component {
       key={this.options[x].key}
       property={this.options[x].key}
       onToggle={this.options[x].routeFunction}
+      value={this.options[x].value}
     />
   )
 

@@ -16,10 +16,11 @@ export default class RowSwitch extends Component {
     })
   }
   _onPressToggleSetting = () => {
+    const newValue = !this.state.value
     this.setState({
-      value: !this.state.value
+      value: newValue
     })
-    this.props.onToggle(this.state.value)
+    this.props.onToggle(newValue)
   }
 
   render () {
