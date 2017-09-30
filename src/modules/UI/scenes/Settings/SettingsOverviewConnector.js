@@ -12,12 +12,13 @@ const mapStateToProps = (state) => ({
   defaultFiat: SETTINGS_SELECTORS.getDefaultFiat(state),
   autoLogoutTimeInMinutes: SETTINGS_SELECTORS.getAutoLogoutTimeInMinutes(state),
   username: CORE_SELECTORS.getUsername(state),
+  account : CORE_SELECTORS.getAccount(state),
   supportsTouchId: supportsTouchId(),
-  touchIdEnabled: touchIdEnabled()
+  touchIdEnabled: touchIdEnabled(CORE_SELECTORS.getAccount(state)),
 })
 const mapDispatchToProps = (dispatch) => ({
   setAutoLogoutTimeInMinutes: (autoLogoutTimeInMinutes) => dispatch(setAutoLogoutTimeInMinutesRequest(autoLogoutTimeInMinutes)),
-  enableTouchId: (arg) => enableTouchId(arg)
+  enableTouchId: (arg, account) => enableTouchId(arg, account)
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(SettingsOverview)
