@@ -59,7 +59,7 @@ export const newTransactionsRequest = (walletId: string, transactions: Array<Abc
     message: 'You have received a new transaction',
     buttons: [{
       text: 'View',
-      onPress: () => Actions.transactionDetails({transaction: transactions[0]})
+      onPress: () => Actions.transactionDetails({tx: transactions[0]})
     }]
   }
   dispatch(openABAlert(messageInfo))
