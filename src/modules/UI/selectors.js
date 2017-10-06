@@ -78,3 +78,8 @@ export const getSceneState = (state: State, sceneKey: string) => {
   const sceneState = getScenesState(state)[sceneKey]
   return sceneState
 }
+
+export const getGlobalDropdownState = (state: State) => {
+  const globalDropdownState = getUIState(state).globalDropdown
+  return globalDropdownState
+}
