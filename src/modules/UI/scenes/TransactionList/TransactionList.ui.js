@@ -288,7 +288,7 @@ export default class TransactionList extends Component {
             <ListView
               style={[styles.transactionsScrollWrap]}
               dataSource={dataSrc}
-              renderRow={(tx) => this.renderTx(tx, completedTxList)}
+              renderRow={this.renderTx(completedTxList)}
               onEndReached={this.loadMoreTransactions}
               onEndReachedThreshold={60}
               enableEmptySections
@@ -313,7 +313,7 @@ export default class TransactionList extends Component {
     return !this.isReceivedTransaction(tx)
   }
 
-  renderTx = (tx, completedTxList) => {
+  renderTx = (completedTxList) => (tx) => {
     let txColorStyle
     let txName = ''
     let txImage
