@@ -28,6 +28,9 @@ import receivedTypeImage from '../../../../assets/images/transactions/transactio
 //import SearchBar from './components/SearchBar.ui'
 
 export default class TransactionList extends Component {
+  completedTxList
+  multiplier
+
   constructor (props) {
     super(props)
     this.state = {
@@ -141,6 +144,48 @@ export default class TransactionList extends Component {
 
   toggleShowBalance = () => this.setState({showBalance: !this.state.showBalance})
 
+  renderRow = (tx) => {
+    return this.renderTx(tx, this.completedTxList)
+  }
+
+  dateSort (a: any, b: any) {
+    a = new Date(a.date)
+    b = new Date(b.date)
+    return a > b ? -1 : a < b ? 1 : 0
+  }
+
+  mapRenderableToCompleted = (x: any, i: any) => {
+    let newValue = x
+    newValue.key = i
+    newValue.multiplier = this.multiplier
+    let txDate = new Date(x.date * 1000)
+
+    // let time = formatAMPM(txDate)
+    // let dateString = monthNames[month] + ' ' + day + ', ' + year // will we need to change date format based on locale?
+    let dateString = txDate.toLocaleDateString('en-US', {month: 'short', day: '2-digit', year: 'numeric'})
+    let time = txDate.toLocaleTimeString('en-US', {hour: 'numeric', minute: 'numeric'})
+    newValue.dateString = dateString
+    newValue.time = time
+    return newValue
+  }
+
+  makeRenderableTransactionList = (transactions) => {
+    let renderableTransactionList = transactions.sort(this.dateSort)
+    this.completedTxList = renderableTransactionList.map(this.mapRenderableToCompleted)
+  }
+
+  onPressScan () {
+    return Actions.scan()
+  }
+
+  onPressRequest () {
+    return Actions.request()
+  }
+
+  rowHasChanged (row1, row2) {
+    return row1 !== row2
+  }
+
   render () {
     const {
       loading,
@@ -160,31 +205,16 @@ export default class TransactionList extends Component {
       return <ActivityIndicator style={{flex: 1, alignSelf: 'center'}} size={'large'}/>
     }
 
+    this.multiplier = multiplier
+
     // console.log('about to render txList, this is: ', this)
     let cryptoBalanceString
     let cryptoAmountString
-    let renderableTransactionList = transactions.sort(function (a, b) {
-      a = new Date(a.date)
-      b = new Date(b.date)
-      return a > b ? -1 : a < b ? 1 : 0
-    })
 
-    let completedTxList = renderableTransactionList.map((x, i) => {
-      let newValue = x
-      newValue.key = i
-      newValue.multiplier = multiplier
-      let txDate = new Date(x.date * 1000)
+    this.makeRenderableTransactionList(transactions)
 
-      // let time = formatAMPM(txDate)
-      // let dateString = monthNames[month] + ' ' + day + ', ' + year // will we need to change date format based on locale?
-      let dateString = txDate.toLocaleDateString('en-US', {month: 'short', day: '2-digit', year: 'numeric'})
-      let time = txDate.toLocaleTimeString('en-US', {hour: 'numeric', minute: 'numeric'})
-      newValue.dateString = dateString
-      newValue.time = time
-      return newValue
-    })
-    let ds = new ListView.DataSource({rowHasChanged: (row1, row2) => row1 !== row2})
-    let dataSrc = ds.cloneWithRows(completedTxList)
+    let ds = new ListView.DataSource({rowHasChanged: this.rowHasChanged})
+    let dataSrc = ds.cloneWithRows(this.completedTxList)
     let logo
 
     if (uiWallet.currencyCode !== selectedCurrencyCode) {
@@ -262,7 +292,7 @@ export default class TransactionList extends Component {
                       </TouchableOpacity>
                     )}
                 <View style={[styles.requestSendRow, UTILS.border()]}>
-                  <TouchableHighlight underlayColor='rgba(0,0,0,0.25)' onPress={() => Actions.request()} style={[styles.requestBox, styles.button]}>
+                  <TouchableHighlight underlayColor='rgba(0,0,0,0.25)' onPress={this.onPressRequest} style={[styles.requestBox, styles.button]}>
                     <View style={[styles.requestWrap]}>
                       <Image
                         style={{width: 25, height: 25}}
@@ -271,7 +301,7 @@ export default class TransactionList extends Component {
                       <T style={[styles.request]}>{sprintf(strings.enUS['fragment_request_subtitle'])}</T>
                     </View>
                   </TouchableHighlight>
-                  <TouchableHighlight underlayColor='rgba(0,0,0,0.25)' onPress={() => Actions.scan()} style={[styles.sendBox, styles.button]}>
+                  <TouchableHighlight underlayColor='rgba(0,0,0,0.25)' onPress={this.onPressScan} style={[styles.sendBox, styles.button]}>
                     <View style={[styles.sendWrap]}>
                       <Image
                         style={{width: 25, height: 25}}
@@ -289,7 +319,7 @@ export default class TransactionList extends Component {
             <ListView
               style={[styles.transactionsScrollWrap]}
               dataSource={dataSrc}
-              renderRow={(tx) => this.renderTx(tx, completedTxList)}
+              renderRow={this.renderRow}
               onEndReached={this.loadMoreTransactions}
               onEndReachedThreshold={60}
               enableEmptySections
@@ -314,7 +344,16 @@ export default class TransactionList extends Component {
     return !this.isReceivedTransaction(tx)
   }
 
-  renderTx = (tx, completedTxList) => {
+  findContactTx
+
+  findContact (element) {
+    let fullName = (element.givenName && element.familyName) ? element.givenName + ' ' + element.familyName : element.givenName
+    let found = (element.thumbnailPath && (UTILS.unspacedLowercase(fullName) === UTILS.unspacedLowercase(this.findContactTx.metadata.name)))
+    // if (found) console.log('element is: ', element)
+    return found
+  }
+
+  renderTx (tx, completedTxList) {
     let txColorStyle
     let txName = ''
     let txImage
@@ -334,12 +373,8 @@ export default class TransactionList extends Component {
 
     if (tx.metadata.name) {
       if (this.props.contacts) {
-        let contact = this.props.contacts.find((element) => {
-          let fullName = (element.givenName && element.familyName) ? element.givenName + ' ' + element.familyName : element.givenName
-          let found = (element.thumbnailPath && (UTILS.unspacedLowercase(fullName) === UTILS.unspacedLowercase(tx.metadata.name)))
-          // if (found) console.log('element is: ', element)
-          return found
-        })
+        this.findContactTx = tx
+        let contact = this.props.contacts.find(this.findContact)
         if (contact) {
           thumbnailPath = contact.thumbnailPath
         }
