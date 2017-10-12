@@ -144,9 +144,7 @@ export default class TransactionList extends Component {
 
   toggleShowBalance = () => this.setState({showBalance: !this.state.showBalance})
 
-  renderRow = (tx) => {
-    return this.renderTx(tx, this.completedTxList)
-  }
+  renderRow = (tx) => this.renderTx(tx, this.completedTxList)
 
   dateSort (a: any, b: any) {
     a = new Date(a.date)
